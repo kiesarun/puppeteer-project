@@ -1,12 +1,14 @@
 const puppeteer = require('puppeteer')
 const { expect } = require('chai')
 
+const { click, getText, getCount, shouldNotExist }= require('../lib/helpers')
+
 describe('My First Puppeteer Test', () => {
     let browser
     let page
 
     before(async function() {
-        browser = await puppeterr.launch({
+        browser = await puppeteer.launch({
             headless: false,
             slowMo: 10,
             devtools: false
@@ -35,8 +37,10 @@ describe('My First Puppeteer Test', () => {
         await page.type('#tsf > div:nth-child(2) > div.A8SBwf > div.RNNXgb > div > div.a4bIc > input', 'youtube\n', {delay: 0})
         const title = await page.title()
         const url = await page.url()
-        const text = await page.$eval('#rso > div:nth-child(1) > div > div.r > a > h3', element => element.textContent)
-        const count = await page.$$eval('h1', element => element.length)
+        // const text = await page.$eval('#rso > div:nth-child(1) > div > div.r > a > h3', element => element.textContent)
+        // const count = await page.$$eval('h1', element => element.length)
+        const text = await getText(page, '#hdtb-msb-vis > div.hdtb-mitem.hdtb-msel.hdtb-imb')
+        const count = await getCount(page, 'h1')
         console.log('Title: ' , title)
         console.log('url: ' , url)
         console.log('Text in H1: ' , text)
@@ -48,14 +52,17 @@ describe('My First Puppeteer Test', () => {
         expect(count).to.equal(7)
 
         await page.goto('http://zero.webappsecurity.com/index.html')
-        await page.waitForSelector('#signin_button')
-        await page.click('#signin_button')
-        // await page.waitFor(() => !document.querySelector('#signin_button'))
-        const eiei = await document.querySelector('#signin_button')
-        console.log(eiei)
-        await page.waitForSelector('#signin_button', { 
-            hidden: true,
-            timeout: 3000
-        })
+        // await page.waitForSelector('#signin_button')
+        // await page.click('#signin_button')
+        await click(page, '#signin_button')
+        await page.waitFor(() => !document.querySelector('#signin_button'))
+        // const eiei = await document.querySelector('#signin_button')
+        // console.log(eiei)
+        // await page.waitForSelector('#signin_button', { 
+        //     hidden: true,
+        //     timeout: 3000
+        // })
+        await page.waitFor(2000)
+        await shouldNotExist(page, '#signin_button')
     })
 })
